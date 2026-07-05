@@ -22,7 +22,9 @@ components:
           targetPort: 5173
           exposure: public
           secure: true
+          protocol: https
         - name: backend
           targetPort: 5000
           exposure: public
           secure: true
+          protocol: https

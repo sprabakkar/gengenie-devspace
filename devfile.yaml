@@ -1,0 +1,27 @@
+schemaVersion: 2.2.2
+
+metadata:
+  name: gengenie-workspace
+
+projects:
+  - name: gengenie-backend
+    git:
+      remotes:
+        origin: https://github.com/sprabakkar/gengenie-backend.git
+
+  - name: gengenie-frontend
+    git:
+      remotes:
+        origin: https://github.com/sprabakkar/gengenie-frontend.git
+
+components:
+  - name: tools
+    container:
+      image: quay.io/devspaces/udi-rhel8
+      memoryLimit: 4Gi
+      mountSources: true
+      endpoints:
+        - name: frontend
+          targetPort: 3000
+        - name: backend
+          targetPort: 5000

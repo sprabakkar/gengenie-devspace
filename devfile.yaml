@@ -2,18 +2,15 @@ schemaVersion: 2.2.2
 
 metadata:
   name: gengenie-workspace
-
 projects:
   - name: gengenie-backend
     git:
       remotes:
         origin: https://github.com/sprabakkar/gengenie-backend.git
-
   - name: gengenie-frontend
     git:
       remotes:
         origin: https://github.com/sprabakkar/gengenie-frontend.git
-
 components:
   - name: tools
     container:
@@ -25,7 +22,6 @@ components:
           targetPort: 5173
           exposure: public
           secure: true
-          
         - name: gengenie-backend
           targetPort: 5000
           exposure: public

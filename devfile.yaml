@@ -21,7 +21,12 @@ components:
       memoryLimit: 4Gi
       mountSources: true
       endpoints:
-        - name: frontend
-          targetPort: 3000
-        - name: backend
+        - name: gengenie-frontend
+          targetPort: 5173
+          exposure: public
+          secure: true
+          
+        - name: gengenie-backend
           targetPort: 5000
+          exposure: public
+          secure: true

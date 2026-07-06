@@ -21,7 +21,9 @@ components:
       memoryLimit: 4Gi
       mountSources: true
 
+      # ⭐ Backend + Frontend environment variables
       env:
+        # Backend env vars
         - name: MISTRAL_API_URL
           value: https://api.mistral.ai/v1/chat/completions
         - name: MAX_FILE_SIZE_BYTES
@@ -35,10 +37,11 @@ components:
         - name: LOG_LEVEL
           value: INFO
 
+        # Frontend env vars
         - name: VITE_API_URL
           value: https://gengenie-workspace-tools-5000-backend.apps.rm3.7wse.p1.openshiftapps.com
 
-        # This env var will be populated from the mounted secret
+        # Mistral API key injected from secret volume
         - name: MISTRAL_API_KEY
           value: ""
 
@@ -57,12 +60,14 @@ components:
           exposure: public
           protocol: https
 
-  # ⭐ Correct Dev Spaces secret component (this mounts your OCP secret)
+  # ⭐ Secure secret for Mistral API key
   - name: mistral-secret
     secret:
-      secretName: mistral-secret
+      data:
+        MISTRAL_API_KEY: 8yYtQLAb5Bu7leRaXJrQHlqrcJ4Avj82
 
 commands:
+  # Install backend dependencies
   - id: install-backend
     exec:
       component: tools
@@ -71,6 +76,7 @@ commands:
       group:
         kind: build
 
+  # Install frontend dependencies
   - id: install-frontend
     exec:
       component: tools
@@ -79,6 +85,7 @@ commands:
       group:
         kind: build
 
+  # Run backend (FastAPI)
   - id: run-backend
     exec:
       component: tools
@@ -87,6 +94,7 @@ commands:
       group:
         kind: run
 
+  # Run frontend (Vite)
   - id: run-frontend
     exec:
       component: tools

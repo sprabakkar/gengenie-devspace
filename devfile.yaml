@@ -67,7 +67,6 @@ components:
         kind: Secret
         metadata:
           name: mistral-secret
-    mountSources: false
 
 commands:
   - id: install-backend

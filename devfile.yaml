@@ -2,29 +2,104 @@ schemaVersion: 2.2.2
 
 metadata:
   name: gengenie-workspace
+
 projects:
   - name: gengenie-backend
     git:
       remotes:
         origin: https://github.com/sprabakkar/gengenie-backend.git
+
   - name: gengenie-frontend
     git:
       remotes:
         origin: https://github.com/sprabakkar/gengenie-frontend.git
+
 components:
   - name: tools
     container:
       image: quay.io/devspaces/udi-rhel8
       memoryLimit: 4Gi
       mountSources: true
+
+      # ⭐ Backend + Frontend environment variables
+      env:
+        # Backend env vars
+        - name: MISTRAL_API_URL
+          value: https://api.mistral.ai/v1/chat/completions
+        - name: MAX_FILE_SIZE_BYTES
+          value: "10485760"
+        - name: LLM_TIMEOUT
+          value: "120"
+        - name: LLM_RETRIES
+          value: "4"
+        - name: LLM_RETRY_DELAY
+          value: "3.0"
+        - name: LOG_LEVEL
+          value: INFO
+
+        # Frontend env vars
+        - name: VITE_API_URL
+          value: https://gengenie-workspace-tools-5000-backend.apps.rm3.7wse.p1.openshiftapps.com
+
+        # Mistral API key injected from secret volume
+        - name: MISTRAL_API_KEY
+          value: ""
+
+      volumeMounts:
+        - name: mistral-secret
+          path: /var/run/secrets/mistral
+
       endpoints:
         - name: frontend
           targetPort: 5173
           exposure: public
-          secure: true
           protocol: https
+
         - name: backend
           targetPort: 5000
           exposure: public
-          secure: true
           protocol: https
+
+  # ⭐ Secure secret for Mistral API key
+  - name: mistral-secret
+    secret:
+      data:
+        MISTRAL_API_KEY: 8yYtQLAb5Bu7leRaXJrQHlqrcJ4Avj82
+
+commands:
+  # Install backend dependencies
+  - id: install-backend
+    exec:
+      component: tools
+      workingDir: /projects/gengenie-backend
+      commandLine: pip install -r requirements.txt
+      group:
+        kind: build
+
+  # Install frontend dependencies
+  - id: install-frontend
+    exec:
+      component: tools
+      workingDir: /projects/gengenie-frontend
+      commandLine: npm install
+      group:
+        kind: build
+
+  # Run backend (FastAPI)
+  - id: run-backend
+    exec:
+      component: tools
+      workingDir: /projects/gengenie-backend
+      commandLine: uvicorn app:app --host 0.0.0.0 --port 5000
+      group:
+        kind: run
+
+  # Run frontend (Vite)
+  - id: run-frontend
+    exec:
+      component: tools
+      workingDir: /projects/gengenie-frontend
+      commandLine: npm run dev
+      group:
+        kind: run
+        isDefault: true

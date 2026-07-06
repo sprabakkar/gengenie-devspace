@@ -101,4 +101,3 @@ commands:
       commandLine: npm run dev
       group:
         kind: run
-        isDefault: true

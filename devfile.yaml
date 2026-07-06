@@ -22,9 +22,9 @@ components:
       mountSources: true
 
       env:
-        # ----------------------------
-        # FastAPI Backend
-        # ----------------------------
+        # ==========================
+        # FastAPI Environment
+        # ==========================
         - name: MISTRAL_API_URL
           value: https://api.mistral.ai/v1/chat/completions
 
@@ -46,26 +46,32 @@ components:
         - name: LOG_LEVEL
           value: "INFO"
 
-        # ----------------------------
-        # React Frontend
-        # ----------------------------
+        # ==========================
+        # React Environment
+        # ==========================
         - name: VITE_API_URL
           value: https://k-prabakar-singaram-gengenie-workspace-backend.apps.rm3.7wse.p1.openshiftapps.com
 
       endpoints:
-        - name: frontend
-          targetPort: 5173
-          exposure: public
-          secure: true
-          protocol: https
         - name: backend
           targetPort: 5000
           exposure: public
-          secure: true
           protocol: https
+          attributes:
+            discoverable: true
+
+        - name: frontend
+          targetPort: 5173
+          exposure: public
+          protocol: https
+          attributes:
+            discoverable: true
 
 commands:
 
+  # ----------------------------
+  # Backend
+  # ----------------------------
   - id: install-backend
     exec:
       component: tools
@@ -76,37 +82,32 @@ commands:
       group:
         kind: build
 
-  - id: install-frontend
-    exec:
-      component: tools
-      workingDir: /projects/gengenie-frontend
-      commandLine: |
-        source ~/.nvm/nvm.sh
-        nvm install 20.19
-        nvm use 20.19
-        npm install
-      group:
-        kind: build
-
   - id: run-backend
     exec:
       component: tools
       workingDir: /projects/gengenie-backend
       commandLine: |
-        uvicorn app:app \
-          --host 0.0.0.0 \
-          --port 5000 \
-          --reload
+        uvicorn app:app --host 0.0.0.0 --port 5000 --reload
       group:
         kind: run
+
+  # ----------------------------
+  # Frontend
+  # ----------------------------
+  - id: install-frontend
+    exec:
+      component: tools
+      workingDir: /projects/gengenie-frontend
+      commandLine: |
+        npm install
+      group:
+        kind: build
 
   - id: run-frontend
     exec:
       component: tools
       workingDir: /projects/gengenie-frontend
       commandLine: |
-        source ~/.nvm/nvm.sh
-        nvm use 20.19
         npm run dev -- --host 0.0.0.0 --port 5173
       group:
         kind: run

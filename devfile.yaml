@@ -53,20 +53,16 @@ components:
           value: http://k-prabakar-singaram-gengenie-workspace-backend.apps.rm3.7wse.p1.openshiftapps.com
 
       endpoints:
-
-        - name: backend
-          targetPort: 5000
-          exposure: public
-          protocol: http
-          attributes:
-            discoverable: true
-
         - name: frontend
           targetPort: 5173
           exposure: public
+          secure: true
           protocol: https
-          attributes:
-            discoverable: true
+        - name: backend
+          targetPort: 5000
+          exposure: public
+          secure: true
+          protocol: https
 
 commands:
 

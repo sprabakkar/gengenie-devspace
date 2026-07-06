@@ -22,7 +22,6 @@ components:
       mountSources: true
 
       env:
-        # Backend env vars
         - name: MISTRAL_API_URL
           value: https://api.mistral.ai/v1/chat/completions
         - name: MAX_FILE_SIZE_BYTES
@@ -36,11 +35,10 @@ components:
         - name: LOG_LEVEL
           value: INFO
 
-        # Frontend env vars
         - name: VITE_API_URL
           value: https://gengenie-workspace-tools-5000-backend.apps.rm3.7wse.p1.openshiftapps.com
 
-        # Mistral API key (loaded from mounted secret)
+        # This env var will be populated from the mounted secret
         - name: MISTRAL_API_KEY
           value: ""
 
@@ -59,21 +57,10 @@ components:
           exposure: public
           protocol: https
 
-  # ⭐ Volume that will hold the mounted secret
+  # ⭐ Correct Dev Spaces secret component (this mounts your OCP secret)
   - name: mistral-secret
-    volume:
-      size: 1Mi
-
-  # ⭐ Inject existing OpenShift secret into the workspace pod
-  - name: mistral-secret-k8s
-    kubernetes:
-      deployTo:
-        - tools
-      inlined: |
-        apiVersion: v1
-        kind: Secret
-        metadata:
-          name: mistral-secret
+    secret:
+      secretName: mistral-secret
 
 commands:
   - id: install-backend

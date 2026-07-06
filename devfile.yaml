@@ -2,88 +2,29 @@ schemaVersion: 2.2.2
 
 metadata:
   name: gengenie-workspace
-
 projects:
   - name: gengenie-backend
     git:
       remotes:
         origin: https://github.com/sprabakkar/gengenie-backend.git
-
   - name: gengenie-frontend
     git:
       remotes:
         origin: https://github.com/sprabakkar/gengenie-frontend.git
-
 components:
   - name: tools
     container:
       image: quay.io/devspaces/udi-rhel8
       memoryLimit: 4Gi
       mountSources: true
-
-      env:
-        # Backend env vars
-        - name: MISTRAL_API_URL
-          value: https://api.mistral.ai/v1/chat/completions
-        - name: MAX_FILE_SIZE_BYTES
-          value: "10485760"
-        - name: LLM_TIMEOUT
-          value: "120"
-        - name: LLM_RETRIES
-          value: "4"
-        - name: LLM_RETRY_DELAY
-          value: "3.0"
-        - name: LOG_LEVEL
-          value: INFO
-
-        # Frontend env vars
-        - name: VITE_API_URL
-          value: https://gengenie-workspace-tools-5000-backend.apps.rm3.7wse.p1.openshiftapps.com
-
-        # Mistral API key — Dev Spaces supports ONLY env vars
-        - name: MISTRAL_API_KEY
-          value: 8yYtQLAb5Bu7leRaXJrQHlqrcJ4Avj82
-
       endpoints:
         - name: frontend
           targetPort: 5173
           exposure: public
+          secure: true
           protocol: https
-
         - name: backend
           targetPort: 5000
           exposure: public
+          secure: true
           protocol: https
-
-commands:
-  - id: install-backend
-    exec:
-      component: tools
-      workingDir: /projects/gengenie-backend
-      commandLine: pip install -r requirements.txt
-      group:
-        kind: build
-
-  - id: install-frontend
-    exec:
-      component: tools
-      workingDir: /projects/gengenie-frontend
-      commandLine: npm install
-      group:
-        kind: build
-
-  - id: run-backend
-    exec:
-      component: tools
-      workingDir: /projects/gengenie-backend
-      commandLine: uvicorn app:app --host 0.0.0.0 --port 5000
-      group:
-        kind: run
-
-  - id: run-frontend
-    exec:
-      component: tools
-      workingDir: /projects/gengenie-frontend
-      commandLine: npm run dev
-      group:
-        kind: run

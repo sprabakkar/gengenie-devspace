@@ -59,12 +59,16 @@ components:
           exposure: public
           protocol: https
 
-  # ⭐ Reference the EXISTING OCP secret (do NOT embed data)
+  # ⭐ Volume that will hold the mounted secret
   - name: mistral-secret
     volume:
       size: 1Mi
+
+  # ⭐ Inject existing OpenShift secret into the workspace pod
   - name: mistral-secret-k8s
     kubernetes:
+      deployTo:
+        - tools
       inlined: |
         apiVersion: v1
         kind: Secret

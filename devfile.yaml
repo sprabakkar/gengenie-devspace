@@ -29,7 +29,7 @@ components:
           value: https://api.mistral.ai/v1/chat/completions
 
         - name: MISTRAL_API_KEY
-          value: "8yYtQLAb5Bu7leRaXJrQHlqrcJ4Avj82"
+          value: 8yYtQLAb5Bu7leRaXJrQHlqrcJ4Avj82
 
         - name: MAX_FILE_SIZE_BYTES
           value: "10485760"

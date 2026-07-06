@@ -61,6 +61,9 @@ components:
 
   # ⭐ Reference the EXISTING OCP secret (do NOT embed data)
   - name: mistral-secret
+    volume:
+      size: 1Mi
+  - name: mistral-secret-k8s
     kubernetes:
       inlined: |
         apiVersion: v1
